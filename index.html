@@ -47,7 +47,7 @@
     margin-bottom: 20px; opacity: 0; animation: fadeUp 0.8s ease forwards 0.2s;
   }
   .hero-names {
-    font-family: 'Cormorant Garamond', serif; font-size: clamp(3rem, 11vw, 5.5rem);
+    font-family: 'Cormorant Garamond', serif; font-size: clamp(1.8rem, 7vw, 5.5rem);
     font-weight: 600; color: var(--plum); line-height: 1.05; margin-bottom: 8px;
     opacity: 0; animation: fadeUp 0.8s ease forwards 0.4s;
   }
@@ -684,10 +684,37 @@
     }).then(() => {
       document.getElementById('rsvp-form-wrap').style.display = 'none';
       document.getElementById('success-msg').style.display = 'block';
+      launchConfetti();
     }).catch(err => {
       console.error(err);
       alert('Помилка надсилання. Перевірте налаштування EmailJS.');
       btn.disabled = false; btn.textContent = 'Відправити 💌';
     });
   }
+
+  function launchConfetti() {
+    const colors = ['#c9748a','#e8a0b0','#5c2d3e','#f7e8ed','#c9a96e','#ffffff','#f0dce8'];
+    const emojis = ['💕','🌸','✨','🎊','💍','🥂'];
+    const total = 120;
+    for (let i = 0; i < total; i++) {
+      const el = document.createElement('div');
+      const isEmoji = Math.random() < 0.25;
+      const delay = Math.random() * 1.5;
+      const duration = 2.5 + Math.random() * 2.5;
+      const drift = (Math.random() - 0.5) * 200;
+      if (isEmoji) {
+        el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        el.style.cssText = `position:fixed;font-size:${10+Math.random()*16}px;left:${Math.random()*100}vw;top:-40px;z-index:9999;pointer-events:none;animation:cFall ${duration}s ease-in forwards;animation-delay:${delay}s;--drift:${drift}px;`;
+      } else {
+        const size = 6 + Math.random() * 8;
+        el.style.cssText = `position:fixed;width:${size}px;height:${size}px;background:${colors[Math.floor(Math.random()*colors.length)]};border-radius:${Math.random()>0.5?'50%':'2px'};left:${Math.random()*100}vw;top:-20px;z-index:9999;pointer-events:none;animation:cFall ${duration}s ease-in forwards;animation-delay:${delay}s;--drift:${drift}px;`;
+      }
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), (delay + duration) * 1000 + 200);
+    }
+  }
+
+  const cStyle = document.createElement('style');
+  cStyle.textContent = `@keyframes cFall {0%{transform:translateY(0) translateX(0) rotate(0deg);opacity:1;}50%{transform:translateY(50vh) translateX(calc(var(--drift)*0.5)) rotate(180deg);opacity:1;}100%{transform:translateY(105vh) translateX(var(--drift)) rotate(360deg);opacity:0;}}`;
+  document.head.appendChild(cStyle);
 </script>
